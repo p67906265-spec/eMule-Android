@@ -14,22 +14,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Build APK
-        run: gradle -p android assembleBasicRelease
-
+          java-version: '11'
+      - name: Install compatible Gradle
+        run: |
+          curl -fL https://services.gradle.org/distributions/gradle-7.3.3-bin.zip -o /tmp/gradle.zip
+          unzip -q /tmp/gradle.zip -d /tmp
+          echo "/tmp/gradle-7.3.3/bin" >> "$GITHUB_PATH"
+      - name: Build debug APK
+        run: gradle -p android assembleBasicDebug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: eMule-Android-APK
-          path: android/jdonkey/build/outputs/apk/basic/release/*.apk
+          path: android/jdonkey/build/outputs/apk/basic/debug/*.apk
           if-no-files-found: error
