@@ -1,0 +1,35 @@
+name: Build eMule Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build APK
+        run: gradle -p android assembleBasicRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: eMule-Android-APK
+          path: android/jdonkey/build/outputs/apk/basic/release/*.apk
+          if-no-files-found: error
